@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 import fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.join(__dirname, "..");
+const ROOT = path.join(__dirname, "../..");
 const OUTPUT_DIR = path.join(ROOT, "output");
 const OUT = path.join(OUTPUT_DIR, "zis-showcase-final.mp4");
 

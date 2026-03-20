@@ -560,18 +560,18 @@ const SceneLegacy: React.FC<{ frame: number }> = ({ frame }) => {
   );
 };
 
-// ── SCENE 8: REBORN IN 3D (780-900) ──────────────────────────────────────────
+// ── SCENE 8: REBORN IN 3D (781-960) ──────────────────────────────────────────
 const SceneResurrection: React.FC<{ frame: number }> = ({ frame }) => {
-  if (frame < 781 || frame >= 900) return null;
-  const lf = frame - 781;
+  if (frame < 781 || frame >= 960) return null;
+  const lf = frame - 781; // 0-179
 
-  const titleOp = fi(lf, 18, 22) * fo(lf, 119, 16);
-  const subOp = fi(lf, 40, 18) * fo(lf, 119, 12);
+  const titleOp = fi(lf, 18, 22) * fo(lf, 179, 16);
+  const subOp = fi(lf, 40, 18) * fo(lf, 179, 12);
   const glow = interpolate(lf, [18, 70, 100], [0, 1, 0.6], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const scl = 0.82 + fi(lf, 18, 32) * 0.18;
 
   // Fade to black at the very end — transition into ArchViz's film burn
-  const fadeBlack = interpolate(lf, [103, 119], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const fadeBlack = interpolate(lf, [163, 179], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
   return (
     <AbsoluteFill style={{ background: "#060504" }}>
@@ -582,7 +582,7 @@ const SceneResurrection: React.FC<{ frame: number }> = ({ frame }) => {
       }} />
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
         <div style={{
-          opacity: fi(lf, 14, 14) * fo(lf, 119, 14),
+          opacity: fi(lf, 14, 14) * fo(lf, 179, 14),
           fontSize: 12, fontWeight: 700, color: "#C8A864",
           fontFamily: "'Courier New', monospace", letterSpacing: 12, marginBottom: 18,
           textShadow: `0 0 40px rgba(200,168,100,${glow * 0.8})`,
@@ -658,16 +658,19 @@ const LegacyIntro: React.FC = () => {
 export const ZISShowcase: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: "#000" }}>
-      {/* Background music throughout the full 90s video */}
-      <Audio src={staticFile("showcase-music.mp3")} />
+      {/* Background music throughout the full 90s video — fade out last 2s */}
+      <Audio
+        src={staticFile("showcase-music.mp3")}
+        volume={(f) => interpolate(f, [2700, 2760], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
+      />
 
       {/* 30-second archival legacy intro */}
-      <Sequence from={0} durationInFrames={900} name="Legacy Intro">
+      <Sequence from={0} durationInFrames={960} name="Legacy Intro">
         <LegacyIntro />
       </Sequence>
 
       {/* 60-second 3D b-roll — ArchViz plays from its own frame 0 */}
-      <Sequence from={900} durationInFrames={1800} name="3D B-Roll">
+      <Sequence from={960} durationInFrames={1800} name="3D B-Roll">
         <ArchViz noAudio />
       </Sequence>
     </AbsoluteFill>

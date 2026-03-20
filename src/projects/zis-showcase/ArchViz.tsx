@@ -13,25 +13,26 @@ import { useGLTF, Environment, ContactShadows, PerspectiveCamera } from "@react-
 import * as THREE from "three";
 
 // ── BEAT DATA (123.05 BPM @ 30fps, synced to showcase-music.mp3) ─────────────
+// ArchViz starts at video frame 960 (32s); beat offsets computed accordingly.
 const BPM = 123.05;
 const SPB = 60 / BPM;          // seconds per beat ≈ 0.488s
 const FPB = SPB * 30;          // frames per beat  ≈ 14.63
 const BAR = FPB * 4;           // frames per bar   ≈ 58.5
 
-// First beat within this ArchViz section = video beat 62 = ArchViz frame 13
-const BEAT0 = 13;
+// First beat within this ArchViz section = video beat 66 = ArchViz frame 10
+const BEAT0 = 10;
 
 // Cut points — snapped to detected beat frames of showcase-music.mp3
 const CUTS = [
   0,
-  363,   // beat 86  – S2 tight front
-  524,   // beat 97  – S3 side low
-  700,   // beat 109 – S4 rear 3/4
-  875,   // beat 121 – S5 wheel close
-  1037,  // beat 132 – S6 overhead
-  1212,  // beat 144 – S7 front grill
-  1373,  // beat 155 – S8 orbit wide
-  1709,  // beat 178 – S9 hero pull-back
+  303,   // beat 86  – S2 tight front
+  464,   // beat 97  – S3 side low
+  640,   // beat 109 – S4 rear 3/4
+  815,   // beat 121 – S5 wheel close
+  977,   // beat 132 – S6 overhead
+  1152,  // beat 144 – S7 front grill
+  1313,  // beat 155 – S8 orbit wide
+  1649,  // beat 178 – S9 hero pull-back
   1800,
 ];
 
@@ -365,13 +366,13 @@ const Overlays: React.FC<{ frame: number }> = ({ frame }) => {
       <ShotLabel frame={frame} n={9} label="Grand Exit" inF={CUTS[8]} />
 
       {/* ── S1: Opening title (0-350) ── */}
-      <SlideText text="ZIS-101A" frame={frame} inF={40} outF={350}
+      <SlideText text="ZIS-101A" frame={frame} inF={40} outF={290}
         style={{ ...font, bottom: 330, left: 72, fontSize: 100, fontWeight: 900, letterSpacing: -4, lineHeight: 1 }} />
-      <SlideText text="SPORT  ·  1938" frame={frame} inF={62} outF={350} dir="right"
+      <SlideText text="SPORT  ·  1938" frame={frame} inF={62} outF={290} dir="right"
         style={{ ...font, bottom: 266, left: 76, fontSize: 28, fontWeight: 300, letterSpacing: 9, color: "#AABBCC" }} />
-      <KineticLine frame={frame} inF={72} outF={350} w={520}
+      <KineticLine frame={frame} inF={72} outF={290} w={520}
         style={{ position: "absolute", bottom: 258, left: 72 }} />
-      <SlideText text="SOVIET UNION  ·  ZAVOD IMENI STALINA  ·  OPEN ROADSTER" frame={frame} inF={90} outF={350} dir="right"
+      <SlideText text="SOVIET UNION  ·  ZAVOD IMENI STALINA  ·  OPEN ROADSTER" frame={frame} inF={90} outF={290} dir="right"
         style={{ ...font, bottom: 218, left: 72, fontSize: 11, letterSpacing: 3, color: "#FFB830", fontWeight: 500 }} />
 
       {/* ── S2: Front low – build year (366-520) ── */}
@@ -482,7 +483,7 @@ const FilmGrain: React.FC<{ frame: number }> = ({ frame }) => {
       position: "absolute", inset: 0,
       backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")`,
       backgroundPosition: `${shift}px ${(shift * 1.4) % 220}px`,
-      opacity: 0.03 + beatPulse(frame) * 0.012,
+      opacity: 0.4,
       mixBlendMode: "overlay",
       pointerEvents: "none",
     }} />
@@ -616,8 +617,6 @@ export const ArchViz: React.FC<{ noAudio?: boolean }> = ({ noAudio = false }) =>
       {/* 2D overlays */}
       <Overlays frame={frame} />
 
-      {/* Film burn intro — on top of everything */}
-      <FilmBurn frame={frame} />
 
       {/* Cut flash + letterbox on top */}
       <CutFlash frame={frame} />

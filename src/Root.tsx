@@ -79,7 +79,7 @@ export const RemotionRoot: React.FC = () => (
     <Composition
       id="ZISShowcase"
       component={ZISShowcase}
-      durationInFrames={2700}
+      durationInFrames={2760}
       fps={30}
       width={1920}
       height={1080}
