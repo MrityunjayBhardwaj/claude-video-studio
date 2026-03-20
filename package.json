@@ -1,0 +1,46 @@
+{
+  "name": "claude-video-studio",
+  "version": "1.0.0",
+  "description": "AI-powered video generation with Remotion + Claude + FFmpeg",
+  "main": "index.js",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "generate": "ts-node --esm src/scripts/render.ts",
+    "render": "ts-node --esm src/scripts/render.ts",
+    "preview": "remotion preview src/index.ts",
+    "from-msd": "ts-node --esm src/scripts/render-from-msd.ts",
+    "from-msd:preview": "ts-node --esm src/scripts/render-from-msd.ts --preview",
+    "promo:audio": "node scripts/generate-audio.mjs",
+    "promo:render": "node scripts/render-promo.mjs",
+    "promo": "npm run promo:audio && npm run promo:render"
+  },
+  "keywords": [
+    "remotion",
+    "claude",
+    "ai",
+    "video"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
+    "@remotion/cli": "^4.0.437",
+    "@remotion/renderer": "^4.0.437",
+    "@remotion/three": "^4.0.438",
+    "@types/three": "^0.183.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "remotion": "^4.0.437",
+    "three": "^0.183.2",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "music-tempo": "^1.0.3",
+    "typescript": "^5.9.3"
+  }
+}

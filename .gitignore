@@ -1,0 +1,22 @@
+node_modules/
+output/
+out/
+.env
+dist/
+.cache/
+
+# Remotion bundle cache
+*.tsbuildinfo
+
+# OS
+.DS_Store
+
+# Large binary assets (3D models, HDRI, raw audio)
+public/zis/
+public/hdri/
+public/models/
+public/car/
+public/wagon/
+public/*.mp3
+public/*.wav
+public/*.hdr
