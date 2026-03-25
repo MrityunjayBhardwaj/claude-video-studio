@@ -11,7 +11,7 @@ dist/
 # OS
 .DS_Store
 
-# Large binary assets (3D models, HDRI, raw audio)
+# Large binary assets (3D models, HDRI, raw audio, raw downloads)
 public/zis/
 public/hdri/
 public/models/
@@ -20,3 +20,4 @@ public/wagon/
 public/*.mp3
 public/*.wav
 public/*.hdr
+public/zis-video/

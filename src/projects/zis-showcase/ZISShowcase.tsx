@@ -8,6 +8,7 @@ import {
   staticFile,
   Sequence,
   Img,
+  OffthreadVideo,
 } from "remotion";
 import { ArchViz } from "./ArchViz";
 
@@ -95,6 +96,11 @@ const Letterbox: React.FC = () => (
 );
 
 // ── ANIMATION HELPERS ─────────────────────────────────────────────────────────
+/** Sepia multiplier: 1.0 at frame 0, fades to 0.0 by frame 480 (16s) */
+function sepiaFade(frame: number) {
+  return interpolate(frame, [0, 480], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+}
+
 function fi(frame: number, start: number, dur = 15) {
   return interpolate(frame, [start, start + dur], [0, 1], {
     extrapolateLeft: "clamp", extrapolateRight: "clamp",
@@ -172,23 +178,18 @@ const SceneEra: React.FC<{ frame: number }> = ({ frame }) => {
   const lineW = interpolate(lf, [12, 36], [0, 380], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) * fo(lf, dur, 14);
   const subOp = fi(lf, 30, 12) * fo(lf, dur, 12);
 
-  // Slow Ken Burns on the photo background
-  const photoScale = interpolate(lf, [0, dur], [1.06, 1.0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const photoOp = fi(lf, 4, 20) * fo(lf, dur, 16);
-
   return (
     <AbsoluteFill style={{ background: "#0C0A07" }}>
-      {/* Real archive photo as background */}
-      <div style={{ position: "absolute", inset: 0, overflow: "hidden", opacity: photoOp * 0.28 }}>
-        <Img
-          src={staticFile("zis-photos/zis1.jpg")}
-          style={{
-            width: "100%", height: "100%", objectFit: "cover",
-            transform: `scale(${photoScale})`,
-            filter: "grayscale(1) sepia(0.3) contrast(1.1) brightness(0.6)",
-          }}
-        />
-      </div>
+      {/* B&W archival factory footage */}
+      <Sequence from={72} durationInFrames={117}>
+        <div style={{
+          position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none",
+          opacity: interpolate(lf, [0, 15, 102, 117], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
+        }}>
+          <OffthreadVideo src={staticFile("zis-video/clip-a-factory.mp4")} muted
+            style={{ width: "100%", height: "100%", objectFit: "cover", filter: `grayscale(1) sepia(${(0.35 * sepiaFade(frame)).toFixed(3)}) contrast(1.2)` }} />
+        </div>
+      </Sequence>
       <div style={{
         position: "absolute", inset: 0,
         background: "radial-gradient(ellipse at center, rgba(20,14,5,0.6) 0%, rgba(0,0,0,0.85) 100%)",
@@ -245,6 +246,16 @@ const SceneCarName: React.FC<{ frame: number }> = ({ frame }) => {
 
   return (
     <AbsoluteFill style={{ background: "#040404" }}>
+      {/* ZIS steering wheel logo B&W */}
+      <Sequence from={189} durationInFrames={117}>
+        <div style={{
+          position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none",
+          opacity: interpolate(lf, [0, 10, 107, 117], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
+        }}>
+          <OffthreadVideo src={staticFile("zis-video/clip-e-steering.mp4")} muted
+            style={{ width: "100%", height: "100%", objectFit: "cover", filter: `grayscale(1) sepia(${(0.4 * sepiaFade(frame)).toFixed(3)}) contrast(1.15)` }} />
+        </div>
+      </Sequence>
       {/* Background glow */}
       <div style={{
         position: "absolute", inset: 0,
@@ -288,22 +299,18 @@ const SceneStory: React.FC<{ frame: number }> = ({ frame }) => {
     { text: "Designed for glory.", size: 26, weight: 400, color: "#C8A864", italic: true, delay: 56 },
   ];
 
-  const photoScale = interpolate(lf, [0, 117], [1.0, 1.05], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const photoOp = fi(lf, 0, 20) * fo(lf, 117, 20);
-
   return (
     <AbsoluteFill style={{ background: "#080806" }}>
-      {/* Side-view photo as subtle background */}
-      <div style={{ position: "absolute", inset: 0, overflow: "hidden", opacity: photoOp * 0.2 }}>
-        <Img
-          src={staticFile("zis-photos/zis3.jpg")}
-          style={{
-            width: "100%", height: "100%", objectFit: "cover",
-            transform: `scale(${photoScale})`,
-            filter: "grayscale(1) sepia(0.2) contrast(1.0) brightness(0.5)",
-          }}
-        />
-      </div>
+      {/* B&W Moscow streets archival footage */}
+      <Sequence from={306} durationInFrames={117}>
+        <div style={{
+          position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none",
+          opacity: interpolate(lf, [0, 15, 102, 117], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
+        }}>
+          <OffthreadVideo src={staticFile("zis-video/clip-b-street.mp4")} muted
+            style={{ width: "100%", height: "100%", objectFit: "cover", filter: `grayscale(1) sepia(${(0.35 * sepiaFade(frame)).toFixed(3)}) contrast(1.1)` }} />
+        </div>
+      </Sequence>
       <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 30% 50%, rgba(20,14,3,0.5) 0%, rgba(0,0,0,0.8) 70%)" }} />
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "center", paddingLeft: 120 }}>
         {lines.map((line, i) => {
@@ -364,6 +371,16 @@ const SceneSpecs: React.FC<{ frame: number }> = ({ frame }) => {
 
   return (
     <AbsoluteFill style={{ background: "#020204" }}>
+      {/* Engine bay footage behind specs */}
+      <Sequence from={423} durationInFrames={124}>
+        <div style={{
+          position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none",
+          opacity: interpolate(lf, [0, 10, 114, 124], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
+        }}>
+          <OffthreadVideo src={staticFile("zis-video/clip-g-engine.mp4")} muted
+            style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(0.7) contrast(1.1) brightness(0.8)" }} />
+        </div>
+      </Sequence>
       <div style={{
         position: "absolute", top: "50%", left: 0, right: 0, height: 1,
         background: "linear-gradient(90deg, transparent, rgba(200,168,100,0.12), transparent)",
@@ -401,56 +418,44 @@ const SceneSpecs: React.FC<{ frame: number }> = ({ frame }) => {
   );
 };
 
-// ── SCENE 6: ARCHIVE PHOTO SCENE (540-660) — real historical photos ───────────
-const ARCHIVE_PHOTOS = [
-  { src: "zis-photos/zis2.jpg", caption: "ZIS-101A SPORT · FRONT 3/4 VIEW · 1938", panX: [0, -30], panY: [0, -10], scale: [1.05, 1.12] },
-  { src: "zis-photos/zis4.jpg", caption: "ZIS-101A SPORT · SIDE PROFILE · МОСКВА 1938", panX: [20, -20], panY: [-5, 5], scale: [1.08, 1.02] },
-  { src: "zis-photos/zis5.jpg", caption: "ZIS-101A SPORT · THE ONLY PROTOTYPE · 1938", panX: [-10, 10], panY: [0, -15], scale: [1.04, 1.10] },
+// ── SCENE 6: ARCHIVE VIDEO SCENE (547-664) — real footage clips ───────────────
+const ARCHIVE_CLIPS = [
+  { src: "zis-video/clip-b-street.mp4",    caption: "ZIS-101 · MOSCOW STREETS · 1938",          seqFrom: 547 },
+  { src: "zis-video/clip-d-museum-wide.mp4", caption: "ZIS-101A SPORT · THE ONLY PROTOTYPE",     seqFrom: 591 },
+  { src: "zis-video/clip-e-steering.mp4",  caption: "ZIS-101A SPORT · DETAIL · ЗАВОД ИМ. СТАЛИНА", seqFrom: 635 },
 ];
 
 const SceneArchive: React.FC<{ frame: number }> = ({ frame }) => {
   if (frame < 547 || frame >= 664) return null;
   const lf = frame - 547; // 0-116
 
-  // Beat-aligned photo cuts: lf=44 (beat40=591), lf=88 (beat43=635)
-  const PHOTO_STARTS = [0, 44, 88];
-  const PHOTO_DURS   = [44, 44, 29];
-  const photoIdx = lf < 44 ? 0 : lf < 88 ? 1 : 2;
-  const sf   = lf - PHOTO_STARTS[photoIdx];
-  const pdur = PHOTO_DURS[photoIdx];
-  const photo = ARCHIVE_PHOTOS[photoIdx];
+  // Beat-aligned cuts: lf=44 (beat40=591), lf=88 (beat43=635)
+  const CLIP_STARTS = [0, 44, 88];
+  const CLIP_DURS   = [44, 44, 29];
+  const clipIdx = lf < 44 ? 0 : lf < 88 ? 1 : 2;
+  const sf   = lf - CLIP_STARTS[clipIdx];
+  const pdur = CLIP_DURS[clipIdx];
+  const clip = ARCHIVE_CLIPS[clipIdx];
 
-  const photoOp   = fi(sf, 0, 10) * fo(sf, pdur, 10);
+  const clipOp    = fi(sf, 0, 10) * fo(sf, pdur, 10);
   const captionOp = fi(sf, 8, 12) * fo(sf, pdur, 8);
-
-  // Ken Burns: interpolate pan and scale within the photo slot
-  const t = sf / pdur;
-  const panX = photo.panX[0] + (photo.panX[1] - photo.panX[0]) * t;
-  const panY = photo.panY[0] + (photo.panY[1] - photo.panY[0]) * t;
-  const scale = photo.scale[0] + (photo.scale[1] - photo.scale[0]) * t;
-
-  // Photo counter fade-in (overall scene)
-  const sceneOp = fi(lf, 0, 8) * fo(lf, 118, 10);
+  const sceneOp   = fi(lf, 0, 8) * fo(lf, 118, 10);
 
   return (
     <AbsoluteFill style={{ background: "#050403" }}>
-      {/* Photo fills the frame */}
-      <div style={{ position: "absolute", inset: 0, overflow: "hidden", opacity: photoOp }}>
-        <Img
-          src={staticFile(photo.src)}
-          style={{
-            width: "100%", height: "100%", objectFit: "cover",
-            transform: `scale(${scale}) translate(${panX}px, ${panY}px)`,
-            filter: "grayscale(0.8) sepia(0.5) contrast(1.15) brightness(0.75)",
-          }}
-        />
+      {/* Video clip fills the frame */}
+      <div style={{ position: "absolute", inset: 0, overflow: "hidden", opacity: clipOp }}>
+        <Sequence from={clip.seqFrom} durationInFrames={pdur}>
+          <OffthreadVideo src={staticFile(clip.src)} muted
+            style={{ width: "100%", height: "100%", objectFit: "cover",
+              filter: `grayscale(0.85) sepia(${(0.45 * sepiaFade(frame)).toFixed(3)}) contrast(1.15) brightness(0.75)` }} />
+        </Sequence>
         {/* Aging vignette */}
         <div style={{
           position: "absolute", inset: 0,
           background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.65) 100%)",
         }} />
-        {/* Sepia wash */}
-        <div style={{ position: "absolute", inset: 0, background: "rgba(40,25,5,0.15)" }} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(40,25,5,0.12)" }} />
       </div>
 
       {/* Film border frame */}
@@ -464,10 +469,10 @@ const SceneArchive: React.FC<{ frame: number }> = ({ frame }) => {
         position: "absolute", bottom: 128, left: "50%", transform: "translateX(-50%)",
         display: "flex", gap: 8, opacity: sceneOp,
       }}>
-        {ARCHIVE_PHOTOS.map((_, i) => (
+        {ARCHIVE_CLIPS.map((_, i) => (
           <div key={i} style={{
-            width: i === photoIdx ? 20 : 6, height: 2,
-            background: i <= photoIdx ? "rgba(200,180,130,0.8)" : "rgba(255,255,255,0.2)",
+            width: i === clipIdx ? 20 : 6, height: 2,
+            background: i <= clipIdx ? "rgba(200,180,130,0.8)" : "rgba(255,255,255,0.2)",
           }} />
         ))}
       </div>
@@ -480,7 +485,7 @@ const SceneArchive: React.FC<{ frame: number }> = ({ frame }) => {
         fontSize: 11, color: "rgba(200,180,130,0.75)", letterSpacing: 4,
         textTransform: "uppercase",
       }}>
-        {photo.caption}
+        {clip.caption}
       </div>
 
       {/* Corner brackets */}
@@ -513,22 +518,18 @@ const SceneLegacy: React.FC<{ frame: number }> = ({ frame }) => {
     { text: "IT WAS ALREADY LEGEND.", size: 54, weight: 900, color: "#C8A864", italic: false, delay: 60 },
   ];
 
-  const photoOp = fi(lf, 0, 24) * fo(lf, 115, 20);
-  const photoScale = interpolate(lf, [0, 117], [1.08, 1.0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-
   return (
     <AbsoluteFill style={{ background: "#060504" }}>
-      {/* Real photo background, very subtle */}
-      <div style={{ position: "absolute", inset: 0, overflow: "hidden", opacity: photoOp * 0.22 }}>
-        <Img
-          src={staticFile("zis-photos/zis1.jpg")}
-          style={{
-            width: "100%", height: "100%", objectFit: "cover",
-            transform: `scale(${photoScale})`,
-            filter: "grayscale(1) sepia(0.4) contrast(1.1) brightness(0.5)",
-          }}
-        />
-      </div>
+      {/* B&W factory gate footage */}
+      <Sequence from={664} durationInFrames={117}>
+        <div style={{
+          position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none",
+          opacity: interpolate(lf, [0, 15, 102, 117], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
+        }}>
+          <OffthreadVideo src={staticFile("zis-video/clip-c-gate.mp4")} muted
+            style={{ width: "100%", height: "100%", objectFit: "cover", filter: `grayscale(1) sepia(${(0.4 * sepiaFade(frame)).toFixed(3)}) contrast(1.15)` }} />
+        </div>
+      </Sequence>
       <div style={{
         position: "absolute", inset: 0,
         background: "radial-gradient(ellipse at center, rgba(20,12,3,0.65) 0%, rgba(0,0,0,0.88) 100%)",
@@ -575,6 +576,16 @@ const SceneResurrection: React.FC<{ frame: number }> = ({ frame }) => {
 
   return (
     <AbsoluteFill style={{ background: "#060504" }}>
+      {/* Actual ZIS-101A Sport cockpit — real car before 3D */}
+      <Sequence from={781} durationInFrames={179}>
+        <div style={{
+          position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none",
+          opacity: interpolate(lf, [0, 20, 159, 179], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
+        }}>
+          <OffthreadVideo src={staticFile("zis-video/clip-f-cockpit.mp4")} muted
+            style={{ width: "100%", height: "100%", objectFit: "cover", filter: "brightness(0.65) contrast(1.1) saturate(0.6)" }} />
+        </div>
+      </Sequence>
       {/* Center glow burst */}
       <div style={{
         position: "absolute", inset: 0,
@@ -644,17 +655,142 @@ const LegacyIntro: React.FC = () => {
 
       {/* Global archival overlays */}
       <ArchiveGrain frame={frame} />
-      <FilmScratches frame={frame} />
+      {/* Scan lines, flicker, jitter — fade out by 16s (frame 480) */}
+      <div style={{ position: "absolute", inset: 0, opacity: sepiaFade(frame) }}>
+        <FilmScratches frame={frame} />
+        <Flicker frame={frame} />
+        <HorizontalTear frame={frame} />
+      </div>
       <ArchiveVignette />
-      <Flicker frame={frame} />
-      <HorizontalTear frame={frame} />
       <LegacyCutFlash frame={frame} />
       <Letterbox />
     </AbsoluteFill>
   );
 };
 
-// ── FULL ZIS SHOWCASE (2700 frames = 30s legacy + 60s 3D) ────────────────────
+// ── SCENE CREDITS (2760-2910, 5 seconds) ──────────────────────────────────────
+const SceneCredits: React.FC = () => {
+  const frame = useCurrentFrame();
+  const fadeIn  = interpolate(frame, [0, 30],  [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
+  const fadeOut = interpolate(frame, [120, 150], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.in(Easing.cubic) });
+  const op = fadeIn * fadeOut;
+
+  const credits = [
+    { category: "3D CAR MODEL",        title: "ZIS-101A Sport (1938)",    author: "Comrade1280",     url: "sketchfab.com/3d-models/zis-101a-sport-1938-a361c0f7b7e041fc8f3437a5cbec681a", license: "CC BY 4.0" },
+    { category: "ARCHIVE FOOTAGE",     title: "Soviet Moscow Footage",    author: "British Pathé",   url: "britishpathe.com",                                                           license: "All Rights Reserved" },
+    { category: "ARCHIVE PHOTOGRAPHS", title: "ZIS-Sport Photography",    author: "Wikimedia Commons", url: "commons.wikimedia.org/wiki/Category:ZIS-Sport",                           license: "Public Domain" },
+    { category: "MUSIC",               title: "Action Cinematic Music",   author: "Serge Quadrado",  url: "archive.org/details/ActionCinematicMusic",                                   license: "CC BY 4.0" },
+  ];
+
+  const mono: React.CSSProperties = { fontFamily: "'Courier New', monospace" };
+  const serif: React.CSSProperties = { fontFamily: "'Times New Roman', serif" };
+  const sans: React.CSSProperties = { fontFamily: "'Helvetica Neue', Arial, sans-serif" };
+  const center: React.CSSProperties = { textAlign: "center", left: 0, right: 0 };
+
+  return (
+    <AbsoluteFill style={{ background: "#060504", opacity: op }}>
+      {/* Subtle center glow */}
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(200,168,100,0.07) 0%, transparent 65%)" }} />
+
+      {/* Title */}
+      <div style={{ position: "absolute", top: 108, ...center, ...mono,
+        fontSize: 14, fontWeight: 700, color: "rgba(200,168,100,0.7)", letterSpacing: 10 }}>
+        CREDITS &amp; ATTRIBUTION
+      </div>
+
+      {/* Divider */}
+      <div style={{ position: "absolute", top: 142, left: "50%", transform: "translateX(-50%)",
+        width: 320, height: 1, background: "linear-gradient(90deg, transparent, rgba(200,168,100,0.4), transparent)" }} />
+
+      {/* Credit rows — 4-column grid */}
+      <div style={{
+        position: "absolute", top: 162, bottom: 250,
+        left: 0, right: 0,
+        display: "flex", flexDirection: "row",
+        alignItems: "center", justifyContent: "center", gap: 0,
+      }}>
+        {credits.map((c, i) => (
+          <div key={i} style={{
+            flex: 1, textAlign: "center", padding: "0 32px",
+            borderRight: i < 3 ? "1px solid rgba(200,168,100,0.12)" : "none",
+          }}>
+            <div style={{ ...mono, fontSize: 11, fontWeight: 700, color: "rgba(200,168,100,0.55)", letterSpacing: 4, marginBottom: 10 }}>
+              {c.category}
+            </div>
+            <div style={{ ...serif, fontSize: 22, fontWeight: 700, color: "#EDE5D0", letterSpacing: 1, marginBottom: 6, lineHeight: 1.2 }}>
+              {c.title}
+            </div>
+            <div style={{ ...mono, fontSize: 15, color: "rgba(200,168,100,0.9)", letterSpacing: 1, marginBottom: 6 }}>
+              {c.author}
+            </div>
+            <div style={{ ...mono, fontSize: 12, color: "rgba(200,168,100,0.5)", letterSpacing: 2, marginBottom: 8 }}>
+              {c.license}
+            </div>
+            <div style={{ ...mono, fontSize: 11, color: "rgba(255,255,255,0.22)", letterSpacing: 0.5, wordBreak: "break-all" }}>
+              {c.url}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Divider before tools */}
+      <div style={{ position: "absolute", bottom: 222, left: "50%", transform: "translateX(-50%)",
+        width: 500, height: 1, background: "linear-gradient(90deg, transparent, rgba(200,168,100,0.25), transparent)" }} />
+
+      {/* Tools used */}
+      <div style={{ position: "absolute", bottom: 138, ...center,
+        display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+        <div style={{ ...mono, fontSize: 12, fontWeight: 700, color: "rgba(200,168,100,0.5)", letterSpacing: 8 }}>
+          MADE WITH
+        </div>
+        <div style={{ display: "flex", gap: 24, alignItems: "center", justifyContent: "center" }}>
+          {/* Claude */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10,
+            background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: 10, padding: "10px 20px" }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L4 7v10l8 5 8-5V7L12 2z" stroke="#CF6B17" strokeWidth="1.5" fill="none"/>
+              <path d="M12 6l-4 2.5v5L12 16l4-2.5v-5L12 6z" fill="#CF6B17" opacity="0.7"/>
+            </svg>
+            <span style={{ ...sans, fontSize: 17, fontWeight: 600, color: "#EDE5D0", letterSpacing: 1 }}>Claude</span>
+          </div>
+          {/* Remotion */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10,
+            background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: 10, padding: "10px 20px" }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="9" stroke="#E0425E" strokeWidth="1.5"/>
+              <polygon points="10,8 10,16 17,12" fill="#E0425E"/>
+            </svg>
+            <span style={{ ...sans, fontSize: 17, fontWeight: 600, color: "#EDE5D0", letterSpacing: 1 }}>Remotion</span>
+          </div>
+          {/* Three.js */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10,
+            background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: 10, padding: "10px 20px" }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <polygon points="12,3 21,18 3,18" stroke="#FFFFFF" strokeWidth="1.5" fill="none"/>
+              <polygon points="12,8 17,17 7,17" stroke="rgba(255,255,255,0.45)" strokeWidth="1" fill="none"/>
+            </svg>
+            <span style={{ ...sans, fontSize: 17, fontWeight: 600, color: "#EDE5D0", letterSpacing: 1 }}>Three.js</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom stamp */}
+      <div style={{ position: "absolute", bottom: 108, left: 0, right: 0, textAlign: "center",
+        ...mono, fontSize: 11, color: "rgba(255,255,255,0.14)", letterSpacing: 4 }}>
+        ZIS-101A SPORT  ·  1938  ·  DIGITAL RECONSTRUCTION
+      </div>
+
+      {/* Letterbox */}
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 88, background: "#000" }} />
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 88, background: "#000" }} />
+    </AbsoluteFill>
+  );
+};
+
+// ── FULL ZIS SHOWCASE (2910 frames = 32s legacy + 60s 3D + 5s credits) ────────
 export const ZISShowcase: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: "#000" }}>
@@ -672,6 +808,11 @@ export const ZISShowcase: React.FC = () => {
       {/* 60-second 3D b-roll — ArchViz plays from its own frame 0 */}
       <Sequence from={960} durationInFrames={1800} name="3D B-Roll">
         <ArchViz noAudio />
+      </Sequence>
+
+      {/* 5-second credits card */}
+      <Sequence from={2760} durationInFrames={150} name="Credits">
+        <SceneCredits />
       </Sequence>
     </AbsoluteFill>
   );

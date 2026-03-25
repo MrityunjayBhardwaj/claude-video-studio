@@ -9,6 +9,7 @@ import { IsometricCity } from "./projects/isometric-city/IsometricCity";
 import { ThreeDemo } from "./projects/three-demo/ThreeDemo";
 import { ArchViz } from "./projects/zis-showcase/ArchViz";
 import { ZISShowcase } from "./projects/zis-showcase/ZISShowcase";
+import { ZISKurzgesagt } from "./projects/zis-showcase/ZISKurzgesagt";
 
 export const RemotionRoot: React.FC = () => (
   <>
@@ -79,7 +80,15 @@ export const RemotionRoot: React.FC = () => (
     <Composition
       id="ZISShowcase"
       component={ZISShowcase}
-      durationInFrames={2760}
+      durationInFrames={2910}
+      fps={30}
+      width={1920}
+      height={1080}
+    />
+    <Composition
+      id="ZISKurzgesagt"
+      component={ZISKurzgesagt}
+      durationInFrames={960}
       fps={30}
       width={1920}
       height={1080}
